@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.genai.rag</groupId>
+    <artifactId>gen-ai</artifactId>
+    <version>1.0</version>
+    <name>gen-ai</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>delivering</id>-->
+<!--            <properties>-->
+<!--                <vocabularies-integration>vocabularies-integration</vocabularies-integration>-->
+<!--                <vocabularies-lib>vocabularies-lib</vocabularies-lib>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.10.0</junit.version>
+        <java.version>17</java.version>
+        <spring-cloud.version>2023.0.1</spring-cloud.version>
+<!--        <vocabularies-integration>./vocabularies-integration</vocabularies-integration>-->
+<!--        <vocabularies-lib>./vocabularies-lib</vocabularies-lib>-->
+<!--        <sonar.organization>vocabularies</sonar.organization>-->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+
+<!--    <dependencyManagement>-->
+<!--        <dependencies>-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-dependencies</artifactId>-->
+<!--                <version>${spring-cloud.version}</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+<!--        </dependencies>-->
+<!--    </dependencyManagement>-->
+
+    <modules>
+        <module>${vocabularies-integration}</module>
+        <module>${vocabularies-lib}</module>
+        <module>vocabularies</module>
+        <module>notification-service</module>
+    </modules>
+</project>
