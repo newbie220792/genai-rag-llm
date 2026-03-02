@@ -1,11 +1,13 @@
-package com.document.service;
+package com.chat.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DocumentServiceApplication {
+public class ChatServiceApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(DocumentServiceApplication.class, args);
+        SpringApplication.run(ChatServiceApplication.class, args);
     }
+
 }

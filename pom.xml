@@ -17,13 +17,13 @@
     </parent>
 
     <profiles>
-<!--        <profile>-->
-<!--            <id>delivering</id>-->
-<!--            <properties>-->
+        <profile>
+            <id>delivering</id>
+            <properties>
 <!--                <vocabularies-integration>vocabularies-integration</vocabularies-integration>-->
 <!--                <vocabularies-lib>vocabularies-lib</vocabularies-lib>-->
-<!--            </properties>-->
-<!--        </profile>-->
+            </properties>
+        </profile>
     </profiles>
 
     <properties>
@@ -51,5 +51,7 @@
 
     <modules>
         <module>embedding-service</module>
+        <module>document-service</module>
+        <module>chat-service</module>
     </modules>
 </project>
