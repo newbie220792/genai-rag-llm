@@ -7,17 +7,16 @@
     <groupId>com.genai.rag</groupId>
     <artifactId>gen-ai</artifactId>
     <version>1.0</version>
-    <name>gen-ai</name>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
-<!--    <profiles>-->
+    <profiles>
 <!--        <profile>-->
 <!--            <id>delivering</id>-->
 <!--            <properties>-->
@@ -25,7 +24,7 @@
 <!--                <vocabularies-lib>vocabularies-lib</vocabularies-lib>-->
 <!--            </properties>-->
 <!--        </profile>-->
-<!--    </profiles>-->
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,22 +37,19 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
-<!--    <dependencyManagement>-->
-<!--        <dependencies>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.cloud</groupId>-->
-<!--                <artifactId>spring-cloud-dependencies</artifactId>-->
-<!--                <version>${spring-cloud.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
-<!--        </dependencies>-->
-<!--    </dependencyManagement>-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <modules>
-        <module>${vocabularies-integration}</module>
-        <module>${vocabularies-lib}</module>
-        <module>vocabularies</module>
-        <module>notification-service</module>
+        <module>embedding-service</module>
     </modules>
 </project>
