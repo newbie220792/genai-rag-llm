@@ -45,6 +45,7 @@ This project demonstrates how to build an AI assistant that can:
     Context Injection
     ↓
     LLM Response (Llama3)
+
 ---
 
 # 🎯 Key Features
@@ -85,6 +86,7 @@ This improves explainability and trustworthiness.
 ---
 
 # 📂 Project Structure
+
     genai-rag-java/
     ├── document-service/
     ├── embedding-service/
@@ -93,10 +95,25 @@ This improves explainability and trustworthiness.
     ├── docker-compose.yml
     └── README.md
 
-
 ---
 
 # 🛠 Setup Instructions
+
+## Run docker with ollama and llama3 image
+
+```bash
+docker run -d \
+  --name ollama \
+  -p 11434:11434 \
+  -v ollama:/root/wso2/.ollama \
+  ollama/ollama
+```
+
+## Run docker command on ollama container
+
+```bash
+docker exec -it ollama
+```
 
 ## 1️⃣ Install Ollama
 
@@ -105,13 +122,21 @@ curl -fsSL https://ollama.com/install.sh | sh
 ```
 
 ## 2️⃣ Pull models
+
 ```bash
-ollama pull llama3:8b-q4
+ollama pull llama3:8b
 ```
 
 ## 3️⃣ Run models
+
 ```bash
-ollama run llama3
+ollama run llama3:8b
+```
+
+## 3️⃣ Unload models from memory
+
+```bash
+ollama stop llama3:8b
 ```
 
 🧪 Future Improvements
