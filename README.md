@@ -104,7 +104,7 @@ This improves explainability and trustworthiness.
 ```bash
 docker run -d \
   --name ollama \
-  -p 11434:11434 \
+  -p 8181:11434 \
   -v ollama:/root/wso2/.ollama \
   ollama/ollama
 ```
@@ -148,3 +148,17 @@ ollama stop llama3:8b
     Evaluation pipeline (RAGAS)
     UI Dashboard
     Multi-language support
+
+## Install PostgreSQL + pgvector bằng Docker
+
+### 1.Chạy container có sẵn pgvector.
+
+```bash
+    docker run -d \
+      --name pgvector \
+      -e POSTGRES_USER=postgres \
+      -e POSTGRES_PASSWORD=123456# \
+      -e POSTGRES_DB=ragdb \
+      -p 5432:5432 \
+      ankane/pgvector
+```
