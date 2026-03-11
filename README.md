@@ -159,6 +159,25 @@ ollama stop llama3:8b
       -e POSTGRES_USER=postgres \
       -e POSTGRES_PASSWORD=123456# \
       -e POSTGRES_DB=ragdb \
-      -p 5432:5432 \
+      -p 8181:5432 \
       ankane/pgvector
 ```
+
+## Create database (ragdb)
+
+### table document
+
+```sql
+ create table document
+ (
+     id       serial primary key,
+     title    varchar(255),
+     content  text,
+     embedding vector(768),
+     metadata json
+ );
+
+CREATE INDEX ON documents
+    USING hnsw (embedding vector_cosine_ops);
+```
+
