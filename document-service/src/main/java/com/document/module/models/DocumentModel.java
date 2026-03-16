@@ -1,4 +1,4 @@
-package com.document.service.models;
+package com.document.module.models;
 
 import java.io.File;
 

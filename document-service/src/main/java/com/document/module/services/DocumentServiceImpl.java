@@ -1,7 +1,9 @@
-package com.document.service.services;
+package com.document.module.services;
 
+import com.document.module.exception.DocumentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class DocumentServiceImpl implements IDocumentService {
     private static final Logger log = LogManager.getLogger(DocumentServiceImpl.class);
 
@@ -51,15 +54,14 @@ public class DocumentServiceImpl implements IDocumentService {
                 if (!buffer.isEmpty()) {
                     chunks.add(buffer.toString());
                 }
+                // save chunks db
+
             } catch (Exception e) {
                 log.error(e.getMessage());
                 throw e;
             }
-            log.info(chunks);
         } else {
-            // throw exception
-            log.error("The document is not a valid file or is not a regular file (not supported by the OS).");
-            throw new Exception("The document is not a valid file or is not a regular file (not supported by the OS).");
+            throw new DocumentException("The document is not a valid file or is not a regular file (not supported by the OS).");
         }
     }
 }
