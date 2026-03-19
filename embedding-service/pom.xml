@@ -3,9 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.embedding.service</groupId>
+    <groupId>com.embedding.module</groupId>
     <artifactId>embedding-service</artifactId>
     <name>embedding-service</name>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>com.genai.rag</groupId>
@@ -44,13 +45,6 @@
             <scope>import</scope>
         </dependency>
     </dependencies>
-
-    <!--    <repositories>-->
-    <!--        <repository>-->
-    <!--            <id>central</id>-->
-    <!--            <url>https://repo.maven.apache.org/maven2</url>-->
-    <!--        </repository>-->
-    <!--    </repositories>-->
 
     <build>
         <plugins>
