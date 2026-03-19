@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" modified="2026-03-18T10:43:52.738Z" version="22.1.2" etag="A3DxgwGbjKNsBpbYrmjv" type="device" pages="3">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.6.3" pages="4">
   <diagram name="Overview" id="P6fhyG3J6Ba6qldUEx8H">
     <mxGraphModel dx="1195" dy="697" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
       <root>
@@ -82,18 +82,47 @@
     </mxGraphModel>
   </diagram>
   <diagram id="JHn5LR9zkF_P1fh6-LIq" name="Token">
-    <mxGraphModel dx="1674" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="719" dy="405" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="ROBOkvAM3LABQl1HG5mk-1" value="Token" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=31;" vertex="1" parent="1">
-          <mxGeometry x="480" y="50" width="240" height="70" as="geometry" />
+        <mxCell id="ROBOkvAM3LABQl1HG5mk-1" parent="1" style="text;html=1;strokeColor=#d79b00;fillColor=#ffe6cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=31;" value="Token" vertex="1">
+          <mxGeometry height="70" width="240" x="480" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="ROBOkvAM3LABQl1HG5mk-2" value="&lt;h1&gt;What is it?&lt;/h1&gt;- là đơn vị dữ liệu cơ bản được xử lý bởi các thuật toán&lt;br&gt;- việc token hóa ảnh hưởng nhiều&amp;nbsp; tới khả năng học, xử lý dữ liệu của model" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="120" width="1130" height="90" as="geometry" />
+        <mxCell id="ROBOkvAM3LABQl1HG5mk-2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1&gt;What is it?&lt;/h1&gt;- là đơn vị dữ liệu cơ bản được xử lý bởi các thuật toán&lt;br&gt;- việc token hóa ảnh hưởng nhiều&amp;nbsp; tới khả năng học, xử lý dữ liệu của model&lt;div&gt;- Cần lựa chọn kỹ thuật toán tokenize&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="1130" x="20" y="120" as="geometry" />
         </mxCell>
-        <mxCell id="ROBOkvAM3LABQl1HG5mk-3" value="&lt;h1&gt;Tokenize&lt;/h1&gt;&lt;div&gt;- Word-based tokenizers&lt;/div&gt;&lt;div&gt;- Character-based tokenizers&lt;/div&gt;&lt;div&gt;- Subword-based tokenizers&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="210" width="580" height="100" as="geometry" />
+        <mxCell id="ROBOkvAM3LABQl1HG5mk-3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1&gt;Tokenize&lt;/h1&gt;&lt;div&gt;- Word-based tokenizers&lt;/div&gt;&lt;div&gt;- Character-based tokenizers&lt;/div&gt;&lt;div&gt;- Subword-based tokenizers&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="580" x="20" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="fyvZpXNvvik-ce2JKKUr-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Ứng dụng trong java&lt;/h1&gt;&lt;div&gt;- Spring AI&lt;/div&gt;&lt;div&gt;- JTokkit&lt;/div&gt;&lt;div&gt;&amp;nbsp;Hai lib của java hỗ trợ chunking text -&amp;gt; token&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="540" x="20" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="bVh2kuyGzXaLFcFV13Gs-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Token Limit&lt;/h1&gt;&lt;div&gt;-&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="600" x="20" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="bVh2kuyGzXaLFcFV13Gs-4" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;API Cost&lt;/h1&gt;&lt;div&gt;-&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="920" x="20" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="bVh2kuyGzXaLFcFV13Gs-5" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Context Window&lt;/h1&gt;&lt;div&gt;- Tổng tối đa số token mà model có thể dùng để tạo ra token kế tiếp, bao gồm original token, conversion, prompt....&lt;/div&gt;&lt;div&gt;-&amp;nbsp; Cỏ thể nói đây là bộ nhớ tạm của model trong session, mà model dùng để tạo token kế tiếp&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="900" x="20" y="650" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="cX_MwuL7rfwVraIe3_tk" name="Models">
+    <mxGraphModel dx="1052" dy="592" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="QqDe8EgD1-jVsejgj4FI-2" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;align=center;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Model&lt;/h1&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="470" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="QqDe8EgD1-jVsejgj4FI-3" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="Khái niệm:&amp;nbsp;&lt;strong data-start=&quot;10&quot; data-end=&quot;29&quot;&gt;model (mô hình)&lt;/strong&gt; là &lt;strong data-start=&quot;33&quot; data-end=&quot;124&quot;&gt;chương trình/toán học đã được huấn luyện để đưa ra dự đoán hoặc sinh kết quả từ dữ liệu&lt;/strong&gt;." vertex="1">
+          <mxGeometry height="30" width="940" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="QqDe8EgD1-jVsejgj4FI-4" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;div style=&quot;line-height: 100%;&quot;&gt;&lt;h1 style=&quot;margin-top: 0px; line-height: 100%;&quot;&gt;Phân loại:&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px; line-height: 100%;&quot;&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;font style=&quot;font-size: 12px; line-height: 100%;&quot;&gt;Frontier Model&lt;/font&gt;&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px; line-height: 100%;&quot;&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;font style=&quot;font-size: 12px; line-height: 100%;&quot;&gt;Large Language Model&lt;/font&gt;&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px; line-height: 100%;&quot;&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;font style=&quot;font-size: 12px; line-height: 100%;&quot;&gt;Data Model&lt;/font&gt;&lt;/span&gt;&amp;nbsp;&lt;/h1&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="1080" x="40" y="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
