@@ -1,5 +1,7 @@
 package com.document.module.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 
 /**
@@ -29,5 +31,5 @@ public interface IDocumentService {
      * @throws Exception                if any error occurs during document loading
      */
 
-    public void loadingDocument(File document) throws Exception;
+    public void loadingDocument(MultipartFile document) throws Exception;
 }

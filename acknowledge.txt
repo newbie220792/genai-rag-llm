@@ -1,0 +1,153 @@
+# RAG SYSTEM ACKNOWLEDGEMENT & DESIGN NOTES
+
+1. PURPOSE
+
+---
+
+This document defines the design decisions and constraints for the RAG (Retrieval-Augmented Generation) system,
+focusing on embedding model usage, versioning strategy, and re-index pipeline.
+
+---
+
+2. EMBEDDING MODEL STRATEGY
+
+---
+
+* The system uses a single embedding model per vector space.
+* All documents and queries MUST be embedded using the same model.
+* Mixing embeddings from different models in the same vector database is NOT allowed.
+
+Key Rule:
+1 Vector DB = 1 Embedding Model
+
+---
+
+3. VERSIONING STRATEGY
+
+---
+
+* Embeddings are versioned to support future migration.
+* Each version represents:
+  (embedding model + chunking strategy + processed data)
+
+Example:
+docs_v1 -> using model A
+docs_v2 -> using model B
+
+Naming Convention:
+collection_name = "docs_<version>"
+
+Active version is controlled via configuration:
+active_version = v1
+
+---
+
+4. DATA REQUIREMENT
+
+---
+
+* Raw documents MUST be stored and preserved.
+
+Reason:
+Re-indexing requires original data.
+Without raw data, migration to a new embedding model is impossible.
+
+Directory:
+/data/raw/
+
+---
+
+5. RE-INDEX PIPELINE
+
+---
+
+Re-indexing is required when:
+- Changing embedding model
+- Improving chunking strategy
+- Fixing poor retrieval quality
+
+Pipeline:
+Raw Data
+-> Chunking
+-> Embedding (new model)
+-> Store in new collection (v2)
+
+Important:
+Re-indexing MUST NOT affect current production traffic.
+
+---
+
+6. DEPLOYMENT STRATEGY (BLUE-GREEN)
+
+---
+
+* v1 remains active during v2 build.
+* v2 is built in parallel.
+* After validation, switch active version.
+
+Flow:
+v1 (active)
+-> build v2
+-> test v2
+-> switch to v2
+-> monitor
+-> deprecate v1
+
+---
+
+7. SWITCH MECHANISM
+
+---
+
+Switching versions is done via configuration, not code changes.
+
+Example:
+active_version = v1 -> v2
+
+The system dynamically routes queries to:
+collection = "docs_" + active_version
+
+---
+
+8. ROLLBACK STRATEGY
+
+---
+
+* Old versions MUST be retained temporarily after switch.
+* In case of failure:
+  revert active_version back to previous version.
+
+---
+
+9. DO NOTs (CRITICAL)
+
+---
+
+* Do NOT mix embeddings from different models.
+* Do NOT delete old version immediately after switching.
+* Do NOT deploy new embedding model without re-indexing.
+* Do NOT lose raw data.
+
+---
+
+10. FUTURE EXTENSIONS
+
+---
+
+* Add reranker model for improved retrieval accuracy.
+* Implement hybrid search (vector + keyword).
+* Add A/B testing for version comparison.
+
+---
+
+11. SUMMARY
+
+---
+
+* Start with v1 only.
+* Design system to support multiple versions.
+* Re-index when needed.
+* Use safe switching strategy.
+* Always preserve raw data.
+
+END OF DOCUMENT
