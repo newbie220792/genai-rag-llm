@@ -1,4 +1,4 @@
-package com.chat.service;
+package com.chat.module;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
