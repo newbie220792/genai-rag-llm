@@ -2,6 +2,7 @@ package com.embedding.module.controller;
 
 import com.embedding.module.models.EmbeddingRequest;
 import com.embedding.module.service.IEmbeddingService;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,17 +21,17 @@ public class EmbeddingController {
         this.embeddingService = embeddingService;
     }
 
-    @PostMapping("embedding")
+    @PostMapping("embedding-document")
     public ResponseEntity<Map<String, Object>> embed(@RequestBody EmbeddingRequest embeddingRequest) {
         Map<String, Object> response = new HashMap<>();
-        List<String> messages = embeddingRequest.getMessages();
-        for (String message : messages) {
-            response.put(message, this.embeddingService.embeddingText(message));
+        List<Document> documents = embeddingRequest.getDocuments();
+        for (Document doc : documents) {
+            response.put(doc.getId(), this.embeddingService.embeddingText(doc.getText()));
         }
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("embedding")
+    @GetMapping("embedding-text")
     public ResponseEntity<EmbeddingResponse> embedTest(@RequestParam String message) {
         EmbeddingResponse embeddingResponse = this.embeddingService.embeddingText(message);
         return ResponseEntity.ok(embeddingResponse);

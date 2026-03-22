@@ -1,7 +1,10 @@
 package com.document.module.services;
 
+import com.document.module.entity.ChunkText;
 import com.document.module.exception.DocumentException;
 import com.document.module.models.EmbeddingModelRes;
+import com.document.module.responsitory.ChunkTextRepository;
+import com.document.module.tokenize.TokenSectionSplitter;
 import com.document.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
@@ -9,12 +12,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +29,15 @@ public class DocumentServiceImpl implements IDocumentService {
     private static final Logger log = LogManager.getLogger(DocumentServiceImpl.class);
 
     private final RestTemplate restTemplate;
+    private final ChunkTextRepository chunkTextRepository;
 
-    public DocumentServiceImpl(RestTemplate restTemplate) {
+    public DocumentServiceImpl(RestTemplate restTemplate, ChunkTextRepository chunkTextRepository) {
         this.restTemplate = restTemplate;
+        this.chunkTextRepository = chunkTextRepository;
     }
+
+    @Value("${embedding.service.url}")
+    private String embeddingServiceUrl;
 
     /**
      * Loads a document from the file system.
@@ -51,26 +62,36 @@ public class DocumentServiceImpl implements IDocumentService {
             List<Document> documents = loadingFile(document);
 
             // 2. chunking
-            TokenTextSplitter tokenTextSplitter = new TokenTextSplitter(
-                    20,
-                    400,
-                    10,
-                    5000,
-                    true,
-                    List.of('.', '?', '!', '\n', '-'));
-            documents = tokenTextSplitter.apply(documents);
+            TokenSectionSplitter tokenSectionSplitter = new TokenSectionSplitter(50, 10);
+            documents = tokenSectionSplitter.apply(documents);
 
             // 3. call embedding model service
-            ResponseEntity<String> res = restTemplate.postForEntity("http://localhost:8080/api/v1/embedding",
-                    Map.of("messages", List.of("test")),
+
+            ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
+                    Map.of("messages", documents),
                     String.class,
                     Map.of("Content-Type", "application/json"));
+            String body = res.getBody();
+            if (body != null) {
+                throw new DocumentException("Body in invalid format.");
+            }
             Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
             }.getType());
-            EmbeddingModelRes embeddingModelRes = map.get("test");
+            if (map == null) {
+                throw new DocumentException("Body in invalid format.");
+            }
+            List<ChunkText> chunkTexts = new ArrayList<>();
+            documents.forEach(doc -> {
+                EmbeddingModelRes embeddingModelRes = map.get(doc.getId());
+                ChunkText chunkText = new ChunkText();
+                chunkText.setContent(doc.getText());
+                chunkText.setEmbedding(embeddingModelRes.getResult().getOutput());
+                chunkText.setTitle(doc.getId());
+                chunkTexts.add(chunkText);
+            });
 
             // 4. save chunks db
-
+            chunkTextRepository.saveAll(chunkTexts);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;

@@ -1,15 +1,17 @@
 package com.embedding.module.models;
 
+import org.springframework.ai.document.Document;
+
 import java.util.List;
 
 public class EmbeddingRequest {
-    List<String> messages;
+    List<Document> documents;
 
-    public List<String> getMessages() {
-        return messages;
+    public List<Document> getDocuments() {
+        return documents;
     }
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 }
