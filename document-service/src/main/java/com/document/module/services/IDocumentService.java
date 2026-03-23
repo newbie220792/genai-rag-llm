@@ -1,8 +1,10 @@
 package com.document.module.services;
 
+import org.springframework.ai.document.Document;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Service interface for document operations.
@@ -32,4 +34,6 @@ public interface IDocumentService {
      */
 
     public void loadingDocument(MultipartFile document) throws Exception;
+
+    public List<Document> searchVector(String userPrompt);
 }

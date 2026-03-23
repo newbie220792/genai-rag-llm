@@ -1,6 +1,7 @@
 package com.chat.module.controller;
 
 import com.chat.module.services.IChatService;
+import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class ChatController {
     }
 
     @GetMapping("chat")
-    public ResponseEntity<?> postMessage(@RequestParam String userId, @RequestParam String message) {
+    public ResponseEntity<OllamaApi.Message> postMessage(@RequestParam String userId, @RequestParam String message) {
         return ResponseEntity.ok(chatService.postMessage(userId, message));
     }
 }

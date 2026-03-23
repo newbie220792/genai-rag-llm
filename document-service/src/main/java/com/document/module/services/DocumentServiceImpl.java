@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.TextReader;
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,10 +30,12 @@ public class DocumentServiceImpl implements IDocumentService {
 
     private final RestTemplate restTemplate;
     private final ChunkTextRepository chunkTextRepository;
+    private final VectorStore vectorStore;
 
-    public DocumentServiceImpl(RestTemplate restTemplate, ChunkTextRepository chunkTextRepository) {
+    public DocumentServiceImpl(RestTemplate restTemplate, ChunkTextRepository chunkTextRepository, VectorStore vectorStore) {
         this.restTemplate = restTemplate;
         this.chunkTextRepository = chunkTextRepository;
+        this.vectorStore = vectorStore;
     }
 
     @Value("${embedding.service.url}")
@@ -66,13 +68,11 @@ public class DocumentServiceImpl implements IDocumentService {
             documents = tokenSectionSplitter.apply(documents);
 
             // 3. call embedding model service
-
             ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
                     Map.of("messages", documents),
-                    String.class,
-                    Map.of("Content-Type", "application/json"));
+                    String.class);
             String body = res.getBody();
-            if (body != null) {
+            if (body == null) {
                 throw new DocumentException("Body in invalid format.");
             }
             Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
@@ -96,6 +96,15 @@ public class DocumentServiceImpl implements IDocumentService {
             log.error(e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * @param userPrompt String
+     * @return docs List<Document>
+     */
+    @Override
+    public List<Document> searchVector(String userPrompt) {
+        return vectorStore.similaritySearch(SearchRequest.builder().query(userPrompt).topK(5).build());
     }
 
     private List<Document> loadingFile(MultipartFile document) {
