@@ -3,9 +3,9 @@ package com.document.module.entity;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Vector;
 
 @Entity
+@Table(name = "documents")
 public class ChunkText {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

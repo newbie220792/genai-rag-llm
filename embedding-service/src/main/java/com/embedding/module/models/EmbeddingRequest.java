@@ -1,17 +1,15 @@
 package com.embedding.module.models;
 
-import org.springframework.ai.document.Document;
-
 import java.util.List;
 
 public class EmbeddingRequest {
-    List<Document> documents;
+    private List<ChunkTextReq> documents;
 
-    public List<Document> getDocuments() {
+    public List<ChunkTextReq> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(List<ChunkTextReq> documents) {
         this.documents = documents;
     }
 }

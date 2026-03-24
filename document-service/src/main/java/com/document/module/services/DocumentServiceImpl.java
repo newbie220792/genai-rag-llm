@@ -2,6 +2,7 @@ package com.document.module.services;
 
 import com.document.module.entity.ChunkText;
 import com.document.module.exception.DocumentException;
+import com.document.module.models.ChunkTextReq;
 import com.document.module.models.EmbeddingModelRes;
 import com.document.module.responsitory.ChunkTextRepository;
 import com.document.module.tokenize.TokenSectionSplitter;
@@ -67,9 +68,19 @@ public class DocumentServiceImpl implements IDocumentService {
             TokenSectionSplitter tokenSectionSplitter = new TokenSectionSplitter(50, 10);
             documents = tokenSectionSplitter.apply(documents);
 
+            List<ChunkTextReq> chunkTextReqs = new ArrayList<>();
+
+            documents.forEach(doc -> {
+                ChunkTextReq chunkTextReq = new ChunkTextReq();
+                chunkTextReq.setId(doc.getId());
+                chunkTextReq.setText(doc.getText());
+                chunkTextReq.setMetadata(doc.getMetadata());
+                chunkTextReqs.add(chunkTextReq);
+            });
+
             // 3. call embedding model service
             ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
-                    Map.of("messages", documents),
+                    Map.of("documents", chunkTextReqs),
                     String.class);
             String body = res.getBody();
             if (body == null) {
@@ -80,6 +91,7 @@ public class DocumentServiceImpl implements IDocumentService {
             if (map == null) {
                 throw new DocumentException("Body in invalid format.");
             }
+
             List<ChunkText> chunkTexts = new ArrayList<>();
             documents.forEach(doc -> {
                 EmbeddingModelRes embeddingModelRes = map.get(doc.getId());
@@ -87,6 +99,7 @@ public class DocumentServiceImpl implements IDocumentService {
                 chunkText.setContent(doc.getText());
                 chunkText.setEmbedding(embeddingModelRes.getResult().getOutput());
                 chunkText.setTitle(doc.getId());
+                chunkText.setMetadata(GsonUtils.toJson(embeddingModelRes.getMetadata()));
                 chunkTexts.add(chunkText);
             });
 

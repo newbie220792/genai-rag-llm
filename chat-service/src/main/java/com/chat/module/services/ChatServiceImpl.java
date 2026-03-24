@@ -1,6 +1,7 @@
 package com.chat.module.services;
 
 import com.chat.module.exception.ChatException;
+import com.chat.module.models.MessageRequest;
 import com.chat.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.ai.document.Document;
@@ -32,12 +33,11 @@ public class ChatServiceImpl implements IChatService {
         this.restTemplate = restTemplate;
     }
 
-
     @Override
-    public OllamaApi.Message postMessage(String userId, String message) {
+    public OllamaApi.Message postMessage(MessageRequest messageRequest) {
         // 1. embedding model
         // 2. search vector
-        ResponseEntity<String> res = restTemplate.getForEntity(documentServiceUrl + "/api/v1/document/search-vector", String.class, Map.of("userPrompt", message));
+        ResponseEntity<String> res = restTemplate.getForEntity(documentServiceUrl + "/api/v1/document/search-vector", String.class, Map.of("userPrompt", messageRequest.getMessage()));
         String body = res.getBody();
         if (body == null) {
             throw new ChatException("Body in invalid format.");
@@ -73,7 +73,7 @@ public class ChatServiceImpl implements IChatService {
                         OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
                                 .content(context).build(),
                         OllamaApi.Message.builder(OllamaApi.Message.Role.USER)
-                                .content(message)
+                                .content(messageRequest.getMessage())
                                 .build()))
                 .options(OllamaChatOptions.builder().temperature(0.9).build())
                 .build();

@@ -30,7 +30,6 @@ public class DocumentConfig {
     @Value("${embedding.model.name}")
     private String embeddingModelName;
 
-
     @Bean
     public EmbeddingModel embeddingModel() {
         OllamaApi ollamaApi = OllamaApi.builder()
@@ -51,7 +50,7 @@ public class DocumentConfig {
                 .indexType(HNSW)                     // Optional: defaults to HNSW
                 .initializeSchema(true)              // Optional: defaults to false
                 .schemaName("public")                // Optional: defaults to "public"
-                .vectorTableName("vector_store")     // Optional: defaults to "vector_store"
+                .vectorTableName("documents")     // Optional: defaults to "vector_store"
                 .maxDocumentBatchSize(10000)         // Optional: defaults to 10000
                 .build();
     }
