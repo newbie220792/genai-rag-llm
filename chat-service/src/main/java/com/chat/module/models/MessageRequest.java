@@ -2,7 +2,7 @@ package com.chat.module.models;
 
 public class MessageRequest {
     private String message;
-    private String userId;
+//    private String userId;
 
     public String getMessage() {
         return message;
@@ -12,11 +12,11 @@ public class MessageRequest {
         this.message = message;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+//    public String getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
 }

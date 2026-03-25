@@ -4,9 +4,13 @@ import com.chat.module.models.MessageRequest;
 import com.chat.module.services.IChatService;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/chat")
 public class ChatController {
 
@@ -33,7 +37,7 @@ public class ChatController {
      * -H "Content-Type: application/json" \
      * -H "Accept: application/json"
      */
-    @PostMapping("post-message")
+    @PostMapping(value = "/post-message")
     public ResponseEntity<OllamaApi.Message> postMessage(@RequestBody MessageRequest messageRequest) {
         return ResponseEntity.ok(chatService.postMessage(messageRequest));
     }

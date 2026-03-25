@@ -1,10 +1,10 @@
 package com.chat.module.services;
 
 import com.chat.module.exception.ChatException;
+import com.chat.module.models.ChunkSearch;
 import com.chat.module.models.MessageRequest;
 import com.chat.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.ai.document.Document;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,12 +36,13 @@ public class ChatServiceImpl implements IChatService {
     public OllamaApi.Message postMessage(MessageRequest messageRequest) {
         // 1. embedding model
         // 2. search vector
-        ResponseEntity<String> res = restTemplate.getForEntity(documentServiceUrl + "/api/v1/document/search-vector", String.class, Map.of("userPrompt", messageRequest.getMessage()));
+        ResponseEntity<String> res = restTemplate.getForEntity(documentServiceUrl + "/api/v1/document/search-vector?userPrompt=" + messageRequest.getMessage(),
+                String.class);
         String body = res.getBody();
         if (body == null) {
             throw new ChatException("Body in invalid format.");
         }
-        List<Document> docs = GsonUtils.fromJson(body, new TypeToken<List<Document>>() {
+        List<ChunkSearch> docs = GsonUtils.fromJson(body, new TypeToken<List<ChunkSearch>>() {
         }.getType());
 
         if (docs == null || docs.isEmpty()) {
@@ -56,7 +56,7 @@ public class ChatServiceImpl implements IChatService {
 
         // 3. build prompt template
         String context = docs.stream()
-                .map(Document::getText)
+                .map(ChunkSearch::getText)
                 .collect(Collectors.joining("\n\n"));
 
         // 4. send prompt to LLM
