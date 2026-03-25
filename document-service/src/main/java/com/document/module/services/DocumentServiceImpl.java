@@ -11,7 +11,8 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.reader.TextReader;
+import org.springframework.ai.reader.ExtractedTextFormatter;
+import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,9 +65,9 @@ public class DocumentServiceImpl implements IDocumentService {
             // 1. loading a document and convert to csv
             List<Document> documents = loadingFile(document);
 
-            // 2. chunking
+            // 2. chunking text
             TokenSectionSplitter tokenSectionSplitter = new TokenSectionSplitter(50, 10);
-            documents = tokenSectionSplitter.apply(documents);
+            documents = tokenSectionSplitter.split(documents);
 
             List<ChunkTextReq> chunkTextReqs = new ArrayList<>();
 
@@ -121,8 +122,10 @@ public class DocumentServiceImpl implements IDocumentService {
     }
 
     private List<Document> loadingFile(MultipartFile document) {
-        TextReader textReader = new TextReader(document.getResource());
-        textReader.getCustomMetadata().put("filename", document.getOriginalFilename());
-        return textReader.read();
+        TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(document.getResource(),
+                ExtractedTextFormatter.builder()
+                        .withLeftAlignment(true)
+                        .build());
+        return tikaDocumentReader.read();
     }
 }
