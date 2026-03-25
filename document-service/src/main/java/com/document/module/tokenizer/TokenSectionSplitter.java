@@ -1,9 +1,13 @@
-package com.document.module.tokenize;
+package com.document.module.tokenizer;
 
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TextSplitter;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -144,22 +148,8 @@ public class TokenSectionSplitter extends TextSplitter {
      * @return list of token-based chunks
      */
     private List<Document> splitByToken(String text, Map<String, Object> metadata) {
-        List<Document> chunks = new ArrayList<>();
-
-        String[] words = text.split("\\s+");
-        int start = 0;
-
-        while (start < words.length) {
-            int end = Math.min(start + maxTokens, words.length);
-
-            String chunk = String.join(" ", Arrays.copyOfRange(words, start, end));
-            chunks.add(new Document(chunk, metadata));
-
-            start = end - overlap;
-            if (start < 0) start = 0;
-        }
-
-        return chunks;
+        TokenTextSplitter tokenTextSplitter = TokenTextSplitter.builder().withChunkSize(500).build();
+        return tokenTextSplitter.apply(List.of(new Document(text, metadata)));
     }
 
     /**
@@ -190,7 +180,7 @@ public class TokenSectionSplitter extends TextSplitter {
 
     @Override
     protected List<String> splitText(String s) {
-        if (s.isEmpty() ) return new ArrayList<>();
+        if (s.isEmpty()) return new ArrayList<>();
         String[] strings = SECTION_PATTERN.split(s);
         List<String> result = new ArrayList<>();
         for (String string : strings) {

@@ -34,6 +34,7 @@ public class EmbeddingServiceImpl implements IEmbeddingService {
         return embeddingModel.call(new EmbeddingRequest(List.of(chunkText),
                 OllamaEmbeddingOptions.builder()
                         .model(modelName)
+                        .dimensions(768)
                         .truncate(false)
                         .build()));
     }

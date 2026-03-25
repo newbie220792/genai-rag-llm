@@ -5,14 +5,18 @@ import com.document.module.exception.DocumentException;
 import com.document.module.models.ChunkTextReq;
 import com.document.module.models.EmbeddingModelRes;
 import com.document.module.responsitory.ChunkTextRepository;
-import com.document.module.tokenize.TokenSectionSplitter;
+import com.document.module.tokenizer.TokenExcelSplitter;
+import com.document.module.tokenizer.TokenPdfSplitter;
+import com.document.module.tokenizer.TokenSectionSplitter;
 import com.document.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,9 +69,34 @@ public class DocumentServiceImpl implements IDocumentService {
             // 1. loading a document and convert to csv
             List<Document> documents = loadingFile(document);
 
+            String fileName = document.getOriginalFilename() != null ? document.getName() : document.getOriginalFilename();
+
             // 2. chunking text
-            TokenSectionSplitter tokenSectionSplitter = new TokenSectionSplitter(50, 10);
-            documents = tokenSectionSplitter.split(documents);
+            DocumentTransformer documentTransformer = null;
+
+            String fileExtension = "";
+            if (fileName != null && fileName.lastIndexOf('.') > 0) {
+                fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            }
+
+            documents = switch (fileExtension) {
+                case "pdf" -> {
+                    documentTransformer = new TokenPdfSplitter();
+                    yield documentTransformer.apply(documents);
+                }
+                case "xlsx", "xls" -> {
+                    documentTransformer = new TokenExcelSplitter();
+                    yield documentTransformer.apply(documents);
+                }
+                case "txt", "json" -> {
+                    documentTransformer = new TokenSectionSplitter(500, 50);
+                    yield documentTransformer.apply(documents);
+                }
+                default -> {
+                    documentTransformer = new TokenTextSplitter();
+                    yield documentTransformer.apply(documents);
+                }
+            };
 
             List<ChunkTextReq> chunkTextReqs = new ArrayList<>();
 
