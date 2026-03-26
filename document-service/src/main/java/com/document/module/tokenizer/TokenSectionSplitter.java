@@ -78,7 +78,7 @@ public class TokenSectionSplitter extends TextSplitter {
      * "1. PURPOSE", "2. EMBEDDING MODEL STRATEGY".
      */
     private static final Pattern SECTION_PATTERN =
-            Pattern.compile("(?=\\n?\\d+\\.\\s+[A-Z][A-Z ]+)");
+            Pattern.compile("(?=\\n\\d+(\\.\\d+)*\\s+[A-Z][^\\n]+)");
 
     /**
      * Constructs a TokenSectionSplitter.
@@ -148,7 +148,12 @@ public class TokenSectionSplitter extends TextSplitter {
      * @return list of token-based chunks
      */
     private List<Document> splitByToken(String text, Map<String, Object> metadata) {
-        TokenTextSplitter tokenTextSplitter = TokenTextSplitter.builder().withChunkSize(500).build();
+        TokenTextSplitter tokenTextSplitter = TokenTextSplitter.builder()
+                .withChunkSize(maxTokens)
+                .withKeepSeparator(true)
+                .withMaxNumChunks(maxTokens)
+                .withPunctuationMarks(List.of('\n', '\r', '-', '?'))
+                .build();
         return tokenTextSplitter.apply(List.of(new Document(text, metadata)));
     }
 
@@ -167,7 +172,7 @@ public class TokenSectionSplitter extends TextSplitter {
      * Estimates token count using a simple whitespace-based approach.
      *
      * <p>
-     * NOTE: This is an approximation. For production systems, replace with
+     * NOTE: This is an approximation. For production systems, replace it with
      * a tokenizer aligned with your embedding model.
      * </p>
      *
@@ -179,13 +184,13 @@ public class TokenSectionSplitter extends TextSplitter {
     }
 
     @Override
-    protected List<String> splitText(String s) {
-        if (s.isEmpty()) return new ArrayList<>();
-        String[] strings = SECTION_PATTERN.split(s);
+    protected List<String> splitText(String text) {
+        if (text.isEmpty()) return new ArrayList<>();
+        String[] strings = SECTION_PATTERN.split(text);
         List<String> result = new ArrayList<>();
-        for (String string : strings) {
-            if (string.isBlank()) continue;
-            result.add(string);
+        for (String s : strings) {
+            if (s.isBlank()) continue;
+            result.add(s);
         }
         return result;
     }
