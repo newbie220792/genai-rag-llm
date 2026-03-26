@@ -5,6 +5,7 @@ import com.document.module.exception.DocumentException;
 import com.document.module.models.ChunkTextReq;
 import com.document.module.models.EmbeddingModelRes;
 import com.document.module.responsitory.ChunkTextRepository;
+import com.document.module.retrievers.IVectorSearch;
 import com.document.module.tokenizer.TokenSectionSplitter;
 import com.document.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
@@ -14,8 +15,6 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,9 +32,9 @@ public class DocumentServiceImpl implements IDocumentService {
 
     private final RestTemplate restTemplate;
     private final ChunkTextRepository chunkTextRepository;
-    private final VectorStore vectorStore;
+    private final IVectorSearch vectorStore;
 
-    public DocumentServiceImpl(RestTemplate restTemplate, ChunkTextRepository chunkTextRepository, VectorStore vectorStore) {
+    public DocumentServiceImpl(RestTemplate restTemplate, ChunkTextRepository chunkTextRepository, IVectorSearch vectorStore) {
         this.restTemplate = restTemplate;
         this.chunkTextRepository = chunkTextRepository;
         this.vectorStore = vectorStore;
@@ -119,7 +118,7 @@ public class DocumentServiceImpl implements IDocumentService {
      */
     @Override
     public List<Document> searchVector(String userPrompt) {
-        return vectorStore.similaritySearch(SearchRequest.builder().query(userPrompt).topK(5).build());
+        return vectorStore.search(userPrompt);
     }
 
     private List<Document> loadingFile(MultipartFile document) {

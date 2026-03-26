@@ -181,3 +181,57 @@ CREATE INDEX ON documents
     USING hnsw (embedding vector_cosine_ops);
 ```
 
+### RAG Strategy
+
+## 1. Native RAG
+
+- Use PgVectorStore.similaritySearch() in Spring AI (hì hiện tại đó chỉ là vector search (semantic search))
+
+```
+User query
+   ↓
+Embedding
+   ↓
+pgvector similarity search
+   ↓
+Top K chunks 
+```
+
+## 2. Hybrid RAG
+
+- Use vector search + keyword search
+
+```Flow
+User query
+    │
+ ┌──┴────────────┐
+ │               │
+Vector search    Keyword search
+(pgvector)       (tsvector)
+ │               │
+ └──────┬────────┘
+        ▼
+    Merge + rerank
+```
+
+- SQL query:
+    - vector search:
+
+```sql
+SELECT id, content, 1 - (embedding <=> :query_embedding) AS score
+FROM documents
+ORDER BY embedding <=> :query_embedding
+LIMIT 10;
+```
+
+- keyword search:
+
+```sql
+SELECT id, content, ts_rank_cd(tsv, query) AS score
+FROM documents,
+     plainto_tsquery(:query) query
+WHERE tsv @@ query
+ORDER BY score
+DESC
+    LIMIT 10;
+```
