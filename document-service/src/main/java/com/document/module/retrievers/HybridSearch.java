@@ -6,7 +6,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HybridRetriever implements IVectorSearch {
+public class HybridSearch implements ISearch {
 
     /**
      * @param searchRequest SearchRequest
@@ -15,7 +15,7 @@ public class HybridRetriever implements IVectorSearch {
     @Override
     public List<Document> search(SearchRequest searchRequest) {
         List<Document> keywordDocs = searchKeywork(searchRequest.getQuery());
-        
+
         List<Document> vectorDocs = similaritySearch(searchRequest);
         return List.of();
     }
@@ -30,6 +30,9 @@ public class HybridRetriever implements IVectorSearch {
     }
 
     private List<Document> searchKeywork(String query) {
+    }
+
+    private List<Document> merchAndReranking(Document... document) {
 
     }
 

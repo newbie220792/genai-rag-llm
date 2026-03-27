@@ -5,7 +5,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 
 import java.util.List;
 
-public interface IVectorSearch {
+public interface ISearch {
     List<Document> search(SearchRequest searchRequest);
 
     List<Document> search(String query);

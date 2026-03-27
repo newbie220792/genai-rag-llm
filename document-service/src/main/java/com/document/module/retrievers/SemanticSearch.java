@@ -11,9 +11,9 @@ import java.util.List;
 import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgDistanceType.COSINE_DISTANCE;
 import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgIndexType.HNSW;
 
-public class NativeRetriever extends PgVectorStore implements IVectorSearch {
+public class SemanticSearch extends PgVectorStore implements ISearch {
 
-    public NativeRetriever(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
+    public SemanticSearch(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
         super(PgVectorStore.builder(jdbcTemplate, embeddingModel)
                 .dimensions(768)                    // Optional: defaults to model dimensions or 1536
                 .distanceType(COSINE_DISTANCE)       // Optional: defaults to COSINE_DISTANCE

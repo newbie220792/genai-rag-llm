@@ -5,8 +5,8 @@ import com.document.module.exception.DocumentException;
 import com.document.module.models.ChunkTextReq;
 import com.document.module.models.EmbeddingModelRes;
 import com.document.module.responsitory.ChunkTextRepository;
-import com.document.module.retrievers.IVectorSearch;
-import com.document.module.retrievers.NativeRetriever;
+import com.document.module.retrievers.ISearch;
+import com.document.module.retrievers.SemanticSearch;
 import com.document.module.tokenizer.TokenSectionSplitter;
 import com.document.module.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
@@ -35,7 +35,7 @@ public class DocumentServiceImpl implements IDocumentService {
 
     private final RestTemplate restTemplate;
     private final ChunkTextRepository chunkTextRepository;
-    private final IVectorSearch vectorStore;
+    private final ISearch vectorStore;
 
     public DocumentServiceImpl(RestTemplate restTemplate,
                                ChunkTextRepository chunkTextRepository,
@@ -43,7 +43,7 @@ public class DocumentServiceImpl implements IDocumentService {
                                JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
         this.chunkTextRepository = chunkTextRepository;
-        this.vectorStore = new NativeRetriever(jdbcTemplate, embeddingModel);
+        this.vectorStore = new SemanticSearch(jdbcTemplate, embeddingModel);
     }
 
     @Value("${embedding.service.url}")
