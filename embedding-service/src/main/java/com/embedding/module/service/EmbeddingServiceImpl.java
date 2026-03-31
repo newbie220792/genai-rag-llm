@@ -1,5 +1,6 @@
 package com.embedding.module.service;
 
+import com.embedding.module.exception.EmbeddingException;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
@@ -19,23 +20,55 @@ public class EmbeddingServiceImpl implements IEmbeddingService {
 
     @Value("${embedding.model.name}")
     private String modelName;
+    private final EmbeddingModel embeddingModel;
 
-    @Override
-    public EmbeddingResponse embeddingText(String chunkText) {
+    private final Long MAX_TOKENS = 1000L;
+
+    public EmbeddingServiceImpl() {
         OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(ollamaBaseUrl)
+                .baseUrl("http://localhost:8181")
                 .build();
-        EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
+        embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
                 .defaultOptions(OllamaEmbeddingOptions.builder().model(modelName)
                         .build())
                 .build();
+    }
 
+    @Override
+    public EmbeddingResponse embeddingText(String chunkText) {
+        boolean isValid = isContextValid(chunkText);
+        if (!isValid) {
+            throw new EmbeddingException("Chunk Text is invalid length");
+        }
         return embeddingModel.call(new EmbeddingRequest(List.of(chunkText),
                 OllamaEmbeddingOptions.builder()
                         .model(modelName)
                         .dimensions(768)
                         .truncate(false)
                         .build()));
+    }
+
+    /**
+     * @param chunkTexts List<String>
+     * @return EmbeddingResponse
+     */
+    @Override
+    public EmbeddingResponse embeddingText(List<String> chunkTexts) {
+        boolean isValid = chunkTexts.stream().allMatch(this::isContextValid);
+        if (!isValid) {
+            throw new EmbeddingException("Chunk Text is invalid length");
+        }
+        return embeddingModel.call(new EmbeddingRequest(chunkTexts,
+                OllamaEmbeddingOptions.builder()
+                        .model(modelName)
+                        .dimensions(768)
+                        .truncate(false)
+                        .build()));
+    }
+
+    private boolean isContextValid(String chunkText) {
+        int approxTokens = chunkText.length() / 4;
+        return approxTokens < MAX_TOKENS;
     }
 }

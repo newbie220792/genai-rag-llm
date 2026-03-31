@@ -1,4 +1,4 @@
-package com.document.module.responsitory;
+package com.document.module.respository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;

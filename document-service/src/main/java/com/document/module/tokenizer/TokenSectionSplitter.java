@@ -1,7 +1,6 @@
 package com.document.module.tokenizer;
 
 import org.springframework.ai.document.Document;
-import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ import java.util.regex.Pattern;
  *     <li>Token estimation is approximate (word-based) and can be replaced by a real tokenizer.</li>
  * </ul>
  */
-public class TokenSectionSplitter extends TextSplitter {
+public class TokenSectionSplitter implements TokenSplitter {
     /**
      * Maximum number of tokens per chunk.
      */
@@ -78,7 +77,7 @@ public class TokenSectionSplitter extends TextSplitter {
      * "1. PURPOSE", "2. EMBEDDING MODEL STRATEGY".
      */
     private static final Pattern SECTION_PATTERN =
-            Pattern.compile("(?=\\n\\d+(\\.\\d+)*\\s+[A-Z][^\\n]+)");
+            Pattern.compile("(?=(?:^|\\n)(?:\\d+(\\.\\d+)*\\s+[A-Z][^\\n]*|[a-zA-Z, ]+\\s+[a-z., ]+\\s+[A-C][12])\\n)");
 
     /**
      * Constructs a TokenSectionSplitter.
@@ -97,7 +96,6 @@ public class TokenSectionSplitter extends TextSplitter {
      * @param documents list of input documents
      * @return list of chunked documents
      */
-    @Override
     public List<Document> split(List<Document> documents) {
         List<Document> results = new ArrayList<>();
 
@@ -183,15 +181,14 @@ public class TokenSectionSplitter extends TextSplitter {
         return text.split("\\s+").length;
     }
 
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param documents the function argument
+     * @return the function result
+     */
     @Override
-    protected List<String> splitText(String text) {
-        if (text.isEmpty()) return new ArrayList<>();
-        String[] strings = SECTION_PATTERN.split(text);
-        List<String> result = new ArrayList<>();
-        for (String s : strings) {
-            if (s.isBlank()) continue;
-            result.add(s);
-        }
-        return result;
+    public List<Document> apply(List<Document> documents) {
+        return split(documents);
     }
 }

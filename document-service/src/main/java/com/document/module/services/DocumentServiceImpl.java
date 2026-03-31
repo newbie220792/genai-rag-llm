@@ -4,7 +4,8 @@ import com.document.module.entity.ChunkText;
 import com.document.module.exception.DocumentException;
 import com.document.module.models.ChunkTextReq;
 import com.document.module.models.EmbeddingModelRes;
-import com.document.module.responsitory.ChunkTextRepository;
+import com.document.module.respository.ChunkTextRepository;
+import com.document.module.retrievers.HybridSearch;
 import com.document.module.retrievers.ISearch;
 import com.document.module.retrievers.SemanticSearch;
 import com.document.module.tokenizer.TokenSectionSplitter;
@@ -28,6 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class DocumentServiceImpl implements IDocumentService {
@@ -86,29 +89,33 @@ public class DocumentServiceImpl implements IDocumentService {
             });
 
             // 3. call embedding model service
-            ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
-                    Map.of("documents", chunkTextReqs),
-                    String.class);
-            String body = res.getBody();
-            if (body == null) {
-                throw new DocumentException("Body in invalid format.");
-            }
-            Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
-            }.getType());
-            if (map == null) {
-                throw new DocumentException("Body in invalid format.");
-            }
-
             List<ChunkText> chunkTexts = new ArrayList<>();
-            documents.forEach(doc -> {
-                EmbeddingModelRes embeddingModelRes = map.get(doc.getId());
-                ChunkText chunkText = new ChunkText();
-                chunkText.setContent(doc.getText());
-                chunkText.setEmbedding(embeddingModelRes.getResult().getOutput());
-                chunkText.setTitle(doc.getId());
-                chunkText.setMetadata(GsonUtils.toJson(embeddingModelRes.getMetadata()));
-                chunkTexts.add(chunkText);
-            });
+            ExecutorService executorService = Executors.newCachedThreadPool();
+            executorService.execute(() -> {
+                ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
+                        Map.of("documents", chunkTextReqs),
+                        String.class);
+
+                String body = res.getBody();
+                if (body == null) {
+                    throw new DocumentException("Body in invalid format.");
+                }
+                Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
+                }.getType());
+                if (map == null) {
+                    throw new DocumentException("Body in invalid format.");
+                }
+
+                map.forEach((k, v) -> {
+                    ChunkText chunkText = new ChunkText();
+                    chunkText.setContent("");
+                    chunkText.setEmbedding(v.getResult().getOutput());
+                    chunkText.setTitle(k);
+                    chunkText.setMetadata(GsonUtils.toJson(v.getMetadata()));
+                    chunkTexts.add(chunkText);
+                });
+                return chunkTexts;
+            }, chunkTexts);
 
             // 4. save chunks db
             chunkTextRepository.saveAll(chunkTexts);
@@ -125,6 +132,12 @@ public class DocumentServiceImpl implements IDocumentService {
     @Override
     public List<Document> searchVector(String userPrompt) {
         return vectorStore.search(userPrompt);
+    }
+
+    @Override
+    public List<Document> hybridSearch(String userPrompt) {
+        ISearch hybridSearch = new HybridSearch(chunkTextRepository);
+        return hybridSearch.search(userPrompt);
     }
 
     private List<Document> loadingFile(MultipartFile document) {

@@ -39,4 +39,14 @@ public class DocumentController {
             return ResponseEntity.badRequest().body(GsonUtils.toJson(e.getMessage()));
         }
     }
+
+    @GetMapping(value = "hybrid-search")
+    public ResponseEntity<?> hybridSearch(@RequestParam String userPrompt) {
+        try {
+            List<Document> docs = documentService.hybridSearch(userPrompt);
+            return ResponseEntity.ok().body(docs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(GsonUtils.toJson(e.getMessage()));
+        }
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.ai.document.DocumentTransformer;
 
 import java.util.List;
 
-public abstract class BaseTokenSplitter implements DocumentTransformer {
+public interface TokenSplitter extends DocumentTransformer {
     /**
      * Applies this function to the given argument.
      *
@@ -13,7 +13,5 @@ public abstract class BaseTokenSplitter implements DocumentTransformer {
      * @return the function result
      */
     @Override
-    public List<Document> apply(List<Document> documents) {
-        return List.of();
-    }
+    public List<Document> apply(List<Document> documents);
 }

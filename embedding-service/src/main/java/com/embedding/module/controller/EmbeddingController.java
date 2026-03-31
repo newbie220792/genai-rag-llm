@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1")
@@ -22,13 +20,10 @@ public class EmbeddingController {
     }
 
     @PostMapping(value = "embedding-document")
-    public ResponseEntity<Map<String, Object>> embed(@RequestBody EmbeddingRequest embeddingRequest) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<EmbeddingResponse> embed(@RequestBody EmbeddingRequest embeddingRequest) {
         List<ChunkTextReq> documents = embeddingRequest.getDocuments();
-        for (ChunkTextReq doc : documents) {
-            response.put(doc.getId(), this.embeddingService.embeddingText(doc.getText()));
-        }
-        return ResponseEntity.ok(response);
+        List<String> texts = documents.stream().map(ChunkTextReq::getText).toList();
+        return ResponseEntity.ok(this.embeddingService.embeddingText(texts));
     }
 
     @GetMapping("embedding-text")

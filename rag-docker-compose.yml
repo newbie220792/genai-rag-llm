@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  embedding-service:
+    build:
+      context: ./embedding-service
+      dockerfile: Dockerfile
+    container_name: embedding-service
+    ports:
+      - "8484:8080"
+    environment:
+      spring.profiles.active: prod
+    networks:
+      - rag-network
+
+  document-service:
+    build:
+      context: ./document-service
+      dockerfile: Dockerfile
+    container_name: document-service
+    ports:
+      - "8082:8082"
+    environment:
+      spring.profiles.active: prod
+    networks:
+      - rag-network
+
+  chat-service:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+    container_name: chat-service
+    ports:
+      - "8083:8083"
+    environment:
+      spring.profiles.active: prod
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+
+#     Disable SSL in Keycloak
+#    1.Access to keycloak-db container: docker exec -it keycloak-db bash
+#    2.Login to Postgres DB: psql -h localhost -p 5432  -U keycloak -d keycloak
+#    3.Update SSL_REQUIRED for master realm: UPDATE REALM SET SSL_REQUIRED = 'NONE' WHERE NAME = 'master';
