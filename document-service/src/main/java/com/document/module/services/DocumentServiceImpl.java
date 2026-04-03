@@ -29,8 +29,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class DocumentServiceImpl implements IDocumentService {
@@ -39,6 +41,7 @@ public class DocumentServiceImpl implements IDocumentService {
     private final RestTemplate restTemplate;
     private final ChunkTextRepository chunkTextRepository;
     private final ISearch vectorStore;
+    private final int MAX_CHUNK_TEXT_SIZE = 100;
 
     public DocumentServiceImpl(RestTemplate restTemplate,
                                ChunkTextRepository chunkTextRepository,
@@ -89,33 +92,16 @@ public class DocumentServiceImpl implements IDocumentService {
             });
 
             // 3. call embedding model service
-            List<ChunkText> chunkTexts = new ArrayList<>();
             ExecutorService executorService = Executors.newCachedThreadPool();
-            executorService.execute(() -> {
-                ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
-                        Map.of("documents", chunkTextReqs),
-                        String.class);
 
-                String body = res.getBody();
-                if (body == null) {
-                    throw new DocumentException("Body in invalid format.");
-                }
-                Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
-                }.getType());
-                if (map == null) {
-                    throw new DocumentException("Body in invalid format.");
-                }
+            List<ChunkText> chunkTexts = new CopyOnWriteArrayList<>();
 
-                map.forEach((k, v) -> {
-                    ChunkText chunkText = new ChunkText();
-                    chunkText.setContent("");
-                    chunkText.setEmbedding(v.getResult().getOutput());
-                    chunkText.setTitle(k);
-                    chunkText.setMetadata(GsonUtils.toJson(v.getMetadata()));
-                    chunkTexts.add(chunkText);
-                });
-                return chunkTexts;
-            }, chunkTexts);
+            for (int i = 0; i < chunkTextReqs.size(); i += MAX_CHUNK_TEXT_SIZE) {
+                int finalI = i;
+                Future<List<ChunkText>> futures = executorService.submit(() ->
+                        getChunkTextReqs(chunkTextReqs.subList(finalI, finalI + MAX_CHUNK_TEXT_SIZE)));
+                chunkTexts.addAll(futures.get());
+            }
 
             // 4. save chunks db
             chunkTextRepository.saveAll(chunkTexts);
@@ -123,6 +109,33 @@ public class DocumentServiceImpl implements IDocumentService {
             log.error(e.getMessage());
             throw e;
         }
+    }
+
+    private List<ChunkText> getChunkTextReqs(List<ChunkTextReq> chunkTextReqs) {
+        List<ChunkText> chunkTexts = new ArrayList<>();
+        ResponseEntity<String> res = restTemplate.postForEntity(embeddingServiceUrl + "/api/v1/embedding-document",
+                Map.of("documents", chunkTextReqs),
+                String.class);
+
+        String body = res.getBody();
+        if (body == null) {
+            throw new DocumentException("Body in invalid format.");
+        }
+        Map<String, EmbeddingModelRes> map = GsonUtils.fromJson(res.getBody(), new TypeToken<Map<String, EmbeddingModelRes>>() {
+        }.getType());
+        if (map == null) {
+            throw new DocumentException("Body in invalid format.");
+        }
+
+        map.forEach((k, v) -> {
+            ChunkText chunkText = new ChunkText();
+            chunkText.setContent(v.getResult().toString());
+            chunkText.setEmbedding(v.getResult().getOutput());
+            chunkText.setTitle(k);
+            chunkText.setMetadata(GsonUtils.toJson(v.getMetadata()));
+            chunkTexts.add(chunkText);
+        });
+        return chunkTexts;
     }
 
     /**
