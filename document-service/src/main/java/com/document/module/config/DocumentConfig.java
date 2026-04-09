@@ -7,10 +7,12 @@ import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 
 @Configuration
+@EnableScheduling
 public class DocumentConfig {
 
     @Bean

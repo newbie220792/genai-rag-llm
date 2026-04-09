@@ -1,6 +1,7 @@
 package com.embedding.module.service;
 
 import com.embedding.module.exception.EmbeddingException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
@@ -20,18 +21,25 @@ public class EmbeddingServiceImpl implements IEmbeddingService {
 
     @Value("${embedding.model.name}")
     private String modelName;
-    private final EmbeddingModel embeddingModel;
+    private EmbeddingModel embeddingModel;
 
-    private final Long MAX_TOKENS = 1000L;
+    private final Long MAX_TOKENS = 768L;
 
     public EmbeddingServiceImpl() {
+    }
+
+    @PostConstruct
+    private void init() {
         OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl("http://localhost:8181")
+                .baseUrl(ollamaBaseUrl)
                 .build();
         embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(OllamaEmbeddingOptions.builder().model(modelName)
-                        .build())
+                .defaultOptions(
+                        OllamaEmbeddingOptions.builder()
+                                .model(modelName)
+                                .dimensions(768)
+                                .build())
                 .build();
     }
 

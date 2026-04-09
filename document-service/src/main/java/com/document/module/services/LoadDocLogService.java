@@ -13,12 +13,23 @@ public class LoadDocLogService {
         this.loadingDocumentLogRepository = loadingDocumentLogRepository;
     }
 
-    public void log(String message, LoadDocStatus status, String startTime, String endTime) {
+    private void log(String docId, String message, LoadDocStatus status, String fileName, String filePath) {
         LoadDocumentLog loadDocumentLog = new LoadDocumentLog();
         loadDocumentLog.setMessage(message);
-        loadDocumentLog.setStartTime(startTime);
-        loadDocumentLog.setEndTime(endTime);
         loadDocumentLog.setStatus(status.name());
-        loadingDocumentLogRepository.save(loadDocumentLog);
+        loadDocumentLog.setDocId(docId);
+        loadDocumentLog.setFileName(fileName);
+        loadDocumentLog.setFilePath(filePath);
+        loadingDocumentLogRepository.saveAndFlush(loadDocumentLog);
+    }
+
+    private void logInfo(String docId, String message, String fileName, String filePath) {
+        LoadDocumentLog loadDocumentLog = loadingDocumentLogRepository.findLoadDocumentLogByDocId(docId);
+        if (loadDocumentLog == null) {
+            log(docId, message, LoadDocStatus.IN_PROGRESS, fileName, filePath);
+        } else {
+            loadDocumentLog.setStatus(LoadDocStatus.IN_PROGRESS.name());
+        }
+        loadingDocumentLogRepository.saveAndFlush(loadDocumentLog);
     }
 }

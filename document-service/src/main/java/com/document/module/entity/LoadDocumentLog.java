@@ -23,9 +23,33 @@ public class LoadDocumentLog {
 
     @Column(name = "file_name")
     private String fileName;
-    
+
     @Column(name = "file_path")
     private String filePath;
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
     public String getStatus() {
         return status;

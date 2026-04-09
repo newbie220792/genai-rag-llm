@@ -1,4 +1,4 @@
-package com.document.module.models;
+package com.embedding.module.models;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,15 +11,15 @@ public class EmbeddingModelRes {
     private Metadata metadata;
     @SerializedName("result")
     private Result result;
-    @SerializedName("results")
-    private List<Result> results;
+    @SerializedName("content")
+    private String content;
 
-    public List<Result> getResults() {
-        return results;
+    public String getContent() {
+        return content;
     }
 
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Metadata getMetadata() {
@@ -138,13 +138,13 @@ public class EmbeddingModelRes {
     }
 
     public static class ResultMetadata {
-        @SerializedName("modalityType")
+        @SerializedName("modality_type")
         private String modalityType;
-        @SerializedName("documentId")
+        @SerializedName("document_id")
         private String documentId;
-        @SerializedName("mimeType")
+        @SerializedName("mime_type")
         private MimeType mimeType;
-        @SerializedName("documentData")
+        @SerializedName("document_data")
         private Object documentData;
 
         public String getModalityType() {
@@ -191,11 +191,11 @@ public class EmbeddingModelRes {
         private String charset;
         @SerializedName("concrete")
         private boolean concrete;
-        @SerializedName("subtypeSuffix")
+        @SerializedName("subtype_suffix")
         private String subtypeSuffix;
-        @SerializedName("wildcardType")
+        @SerializedName("wildcard_type")
         private boolean wildcardType;
-        @SerializedName("wildcardSubtype")
+        @SerializedName("wildcard_subtype")
         private boolean wildcardSubtype;
 
         public String getType() {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1")
@@ -20,14 +21,19 @@ public class EmbeddingController {
     }
 
     @PostMapping(value = "embedding-document")
-    public ResponseEntity<EmbeddingResponse> embed(@RequestBody EmbeddingRequest embeddingRequest) {
+    public ResponseEntity<Map<String, EmbeddingResponse>> embed(@RequestBody EmbeddingRequest embeddingRequest) {
         List<ChunkTextReq> documents = embeddingRequest.getDocuments();
         List<String> texts = documents.stream().map(ChunkTextReq::getText).toList();
-        return ResponseEntity.ok(this.embeddingService.embeddingText(texts));
+        return ResponseEntity.ok(Map.of(embeddingRequest.getDocumentId(), this.embeddingService.embeddingText(texts)));
     }
 
     @GetMapping("embedding-text")
     public ResponseEntity<EmbeddingResponse> embedTest(@RequestParam String message) {
         return ResponseEntity.ok(this.embeddingService.embeddingText(message));
+    }
+
+    @GetMapping("embedding-test")
+    public ResponseEntity<String> embedTest() {
+        return ResponseEntity.ok("Embedding model test...");
     }
 }

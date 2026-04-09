@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LoadingDocumentLogRepository extends BaseRepository<LoadDocumentLog, Long> {
+
+    public LoadDocumentLog findLoadDocumentLogByDocId(String docId);
 }

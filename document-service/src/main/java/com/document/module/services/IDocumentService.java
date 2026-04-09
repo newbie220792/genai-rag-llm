@@ -35,6 +35,8 @@ public interface IDocumentService {
 
     public void loadingDocument(MultipartFile document) throws Exception;
 
+    public void loadingDocument(File document) throws Exception;
+
     public List<Document> searchVector(String userPrompt);
 
     public List<Document> hybridSearch(String userPrompt);

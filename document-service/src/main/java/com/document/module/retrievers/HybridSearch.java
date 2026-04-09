@@ -3,17 +3,20 @@ package com.document.module.retrievers;
 import com.document.module.entity.ChunkText;
 import com.document.module.respository.ChunkTextRepository;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
 
 
 public class HybridSearch implements ISearch {
-
     private final ChunkTextRepository chunkTextRepository;
+    private final SemanticSearch semanticSearch;
 
-    public HybridSearch(ChunkTextRepository chunkTextRepository) {
+    public HybridSearch(ChunkTextRepository chunkTextRepository, JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
         this.chunkTextRepository = chunkTextRepository;
+        this.semanticSearch = new SemanticSearch(jdbcTemplate, embeddingModel);
     }
 
     /**
@@ -23,7 +26,7 @@ public class HybridSearch implements ISearch {
     @Override
     public List<Document> search(SearchRequest searchRequest) {
         List<Document> keywordDocs = searchKeywork(searchRequest);
-        List<Document> vectorDocs = new ArrayList<>();
+        List<Document> vectorDocs = semanticSearch.search(searchRequest);
         return merchAndReranking(keywordDocs, vectorDocs);
     }
 
@@ -54,7 +57,7 @@ public class HybridSearch implements ISearch {
     /**
      * Merges and reranks documents from keyword and vector search results using Reciprocal Rank Fusion (RRF).
      * Vector documents are prioritized first, then keyword documents are added if not already present.
-     * Documents are scored using RRF algorithm with k=60, and the top 10 results are returned.
+     * Documents are scored using the RRF algorithm with k=60, and the top 10 results are returned.
      *
      * @param keywordDocs List of documents from keyword-based search
      * @param vectorDocs  List of documents from vector-based search
