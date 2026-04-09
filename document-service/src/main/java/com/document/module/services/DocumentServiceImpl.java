@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -159,5 +159,18 @@ public class DocumentServiceImpl implements IDocumentService {
                         .withLeftAlignment(true)
                         .build());
         return tikaDocumentReader.read();
+    }
+
+    private List<Document> loadingLargeFile(File document) throws FileNotFoundException {
+        try (FileInputStream fis = new FileInputStream(document)) {
+//            BufferedInputStream bis = new BufferedInputStream(fis);
+            List<Document> documents = new ArrayList<>(MAX_CHUNK_TEXT_SIZE);
+            for (int i = 0; i < document.length(); i++) {
+
+                documents.add(new Document(new String(fis.read)))
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

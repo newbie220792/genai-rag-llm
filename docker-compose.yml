@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  chat-service:
+    container_name: chat-service
+    image: longvannguyen2510/chat-service:1.0
+    ports:
+      - "9090:9090"
+    networks:
+      - default
+
+  auth-service:
+    container_name: auth-service
+    image: longvannguyen2510/auth-service:2.0
+    environment:
+      - SALT=ok9OK6icl0
+      - SECRET_KEY=T2GO18zG7fZ50K80E3X2yZEyGQFvNYPv
+    ports:
+      - "9191:9191"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - default
+
+  vocabularies-service:
+    container_name: vocabularies-service
+    image: longvannguyen2510/vocabularies-service:1.0
+    environment:
+      - SALT=UvSl0bdKUU
+      - SECRET_KEY=4TeSoAu1rnrdlLti3rd7l4Edk3iDFujd
+    ports:
+      - "8082:8082"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/usr/share/zoneinfo/MST:/etc/timezone:ro"
+    networks:
+      - default
+
+  notification-service:
+    container_name: notification-service
+    image: longvannguyen2510/notification-service:1.0
+    environment:
+      - SALT=T8RClTFEmV
+      - SECRET_KEY=dFV92JnG1HivaPXJ9E4na21I7X6PXmHg
+    ports:
+      - "8888:8888"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/root/wso2/vocabularies-micro/etc/:/config"
+    networks:
+      - default
