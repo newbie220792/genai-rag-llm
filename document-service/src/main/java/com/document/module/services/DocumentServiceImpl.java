@@ -123,10 +123,15 @@ public class DocumentServiceImpl implements IDocumentService {
         if (chunkTextReqs.size() <= MAX_CHUNK_TEXT_SIZE) {
             chunkTexts.addAll(getChunkTextReqs(documentId, chunkTextReqs));
         } else {
-            
-            for (int i = 0; i < chunkTextReqs.size(); i += MAX_CHUNK_TEXT_SIZE) {
+            int i = 0;
+            while (i <= chunkTextReqs.size()) {
                 chunkTexts.addAll(getChunkTextReqs(documentId, chunkTextReqs.subList(i, i + MAX_CHUNK_TEXT_SIZE)));
+                if (i >= chunkTextReqs.size() - MAX_CHUNK_TEXT_SIZE) {
+                    break;
+                }
+                i += MAX_CHUNK_TEXT_SIZE;
             }
+            chunkTexts.addAll(getChunkTextReqs(documentId, chunkTextReqs.subList(i, chunkTextReqs.size())));
         }
 
         // 3. save chunks db
