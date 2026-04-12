@@ -52,6 +52,7 @@ public class ChatServiceImpl implements IChatService {
         String systemPrompt = """
                 You are a helpful assistant. Use the following context to answer the user's question.
                 If you don't know the answer based on the context, say so.
+                Summarize the meaning, pronunciation, examples, and part of speech of the following vocabulary word.
                 """;
 
         // 3. build prompt template
